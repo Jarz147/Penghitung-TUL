@@ -2,43 +2,36 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catatan Lembur & TUL</title>
+    <title>Sistem Lembur TUL</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="container">
-        <h2>Penghitung TUL Lembur</h2>
-        
-        <div class="card">
-            <div class="input-group">
-                <label>Nama Karyawan</label>
-                <input type="text" id="nama" placeholder="Masukkan nama...">
-            </div>
-            <div class="input-group">
-                <label>Tanggal Lembur</label>
-                <input type="date" id="tanggal">
-            </div>
-            <div class="input-group">
-                <label>Durasi Lembur (Jam)</label>
-                <input type="number" id="durasi" step="0.5" placeholder="Contoh: 3.5">
-            </div>
-            <button onclick="tambahData()">Simpan Data</button>
+        <div class="summary-card">
+            <p id="labelPeriode">Menghitung...</p>
+            <h1 id="totalTULBesar">0</h1>
+            <p><strong>TOTAL TARIF UPAH LEMBUR (TUL)</strong></p>
         </div>
-
-        <div class="history">
-            <h3>Riwayat Lembur</h3>
+        <div class="card">
+            <h3>Input Lembur</h3>
+            <input type="text" id="nama" placeholder="Nama Karyawan">
+            <input type="date" id="tanggal">
+            <input type="number" id="durasi" step="0.5" placeholder="Durasi Jam (Contoh: 3.5)">
+            <button onclick="tambahData()" id="btnSimpan">Simpan Data</button>
+        </div>
+        <div class="table-container">
             <table id="tabelLembur">
                 <thead>
                     <tr>
-                        <th>Tanggal</th>
+                        <th>Tgl</th>
                         <th>Nama</th>
-                        <th>Durasi (Jam)</th>
-                        <th>Total TUL</th>
+                        <th>Jam</th>
+                        <th>TUL</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
