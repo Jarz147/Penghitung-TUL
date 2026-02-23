@@ -1,9 +1,108 @@
-body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-.container { width: 100%; max-width: 500px; }
-.summary-card { background: #2563eb; color: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-.card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-button { width: 100%; padding: 12px; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-table { width: 100%; margin-top: 20px; background: white; border-collapse: collapse; }
-th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px; }
-.btn-delete { background: #dc2626; color: white; border: none; padding: 5px; cursor: pointer; border-radius: 3px; }
+:root {
+    --primary: #2563eb;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    color: #1e293b;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.summary-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid var(--primary);
+    margin-bottom: 25px;
+}
+
+#totalTULBesar {
+    font-size: 4rem;
+    margin: 10px 0;
+    color: var(--primary);
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 0.8rem;
+}
+
+.btn-delete {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
