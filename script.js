@@ -1,54 +1,56 @@
-/**
- * Fungsi menghitung Tarif Upah Lembur (TUL)
- * Aturan: 
- * - 8 Jam = 16 TUL
- * - Selain itu: 1.5 (jam pertama) + ((Durasi - 1) * 2)
- */
+const SUPABASE_URL = 'https://synhvvaolrjxdcbyozld.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5bmh2dmFvbHJqeGRjYnlvemxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNTAzNDMsImV4cCI6MjA1NTkyNjM0M30.nUe84WvI8r1_v9_m7_v_v_v_v_v_v_v_v_v_v_v_v'; 
+
+const { createClient } = supabase;
+const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 function hitungTUL(jam) {
     if (jam === 8) return 16;
     if (jam <= 0) return 0;
-    
-    // Jam pertama dikali 1.5
-    // Jam kedua dan seterusnya dikali 2
-    if (jam <= 1) {
-        return jam * 1.5;
-    } else {
-        return 1.5 + (jam - 1) * 2;
-    }
+    return jam <= 1 ? jam * 1.5 : 1.5 + (jam - 1) * 2;
 }
 
-function tambahData() {
+function getPeriode() {
+    const sekarang = new Date();
+    let start, end;
+    if (sekarang.getDate() >= 16) {
+        start = new Date(sekarang.getFullYear(), sekarang.getMonth(), 16);
+        end = new Date(sekarang.getFullYear(), sekarang.getMonth() + 1, 15);
+    } else {
+        start = new Date(sekarang.getFullYear(), sekarang.getMonth() - 1, 16);
+        end = new Date(sekarang.getFullYear(), sekarang.getMonth(), 15);
+    }
+    return { startStr: start.toISOString().split('T')[0], endStr: end.toISOString().split('T')[0] };
+}
+
+async function tambahData() {
     const nama = document.getElementById('nama').value;
     const tanggal = document.getElementById('tanggal').value;
-    const durasiInput = document.getElementById('durasi').value;
-    const durasi = parseFloat(durasiInput);
+    const durasi = parseFloat(document.getElementById('durasi').value);
+    if (!nama || !tanggal || isNaN(durasi)) return alert("Isi semua!");
 
-    if (!nama || !tanggal || isNaN(durasi)) {
-        alert("Mohon lengkapi Nama, Tanggal, dan Durasi!");
-        return;
-    }
+    const { error } = await _supabase.from('data_lembur').insert([{ nama, tanggal, durasi, tul: hitungTUL(durasi) }]);
+    if (error) alert(error.message);
+    else { document.getElementById('durasi').value = ''; renderData(); }
+}
 
-    const totalTUL = hitungTUL(durasi);
-    const tbody = document.querySelector('#tabelLembur tbody');
+async function renderData() {
+    const { startStr, endStr } = getPeriode();
+    const { data } = await _supabase.from('data_lembur').select('*').gte('tanggal', startStr).lte('tanggal', endStr).order('tanggal', { ascending: false });
     
-    // Membuat baris baru
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${formatTanggal(tanggal)}</td>
-        <td>${nama}</td>
-        <td>${durasi} Jam</td>
-        <td style="color: #27ae60; font-weight: bold;">${totalTUL.toFixed(1)}</td>
-    `;
-
-    // Menambah baris ke paling atas tabel
-    tbody.prepend(row);
-
-    // Reset input durasi saja agar nama tidak perlu ngetik ulang jika orangnya sama
-    document.getElementById('durasi').value = '';
+    document.getElementById('labelPeriode').innerText = `Periode: ${startStr} - ${endStr}`;
+    const tbody = document.querySelector('#tabelLembur tbody');
+    tbody.innerHTML = '';
+    let total = 0;
+    data?.forEach(item => {
+        total += item.tul;
+        tbody.innerHTML += `<tr><td>${item.tanggal}</td><td>${item.nama}</td><td>${item.durasi}</td><td>${item.tul}</td><td><button class="btn-delete" onclick="hapusData(${item.id})">X</button></td></tr>`;
+    });
+    document.getElementById('totalTULBesar').innerText = total.toFixed(1);
 }
 
-// Fungsi opsional agar format tanggal lebih enak dibaca (DD/MM/YYYY)
-function formatTanggal(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+async function hapusData(id) {
+    if (confirm("Hapus?")) { await _supabase.from('data_lembur').delete().eq('id', id); renderData(); }
 }
+
+window.onload = renderData;
