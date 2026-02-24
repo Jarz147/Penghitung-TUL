@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Lembur TUL - Cut Off 16-15</title>
+    <title>Sistem Lembur TUL - Pajar Ardianto</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -13,8 +13,7 @@
             <div class="summary-card">
                 <div class="filter-section">
                     <label>Pilih Periode History:</label>
-                    <select id="pilihPeriode" onchange="renderData()">
-                        </select>
+                    <select id="pilihPeriode" onchange="renderData()"></select>
                 </div>
                 <p id="labelPeriode">Menghitung periode...</p>
                 <h1 id="totalTULBesar">0</h1>
@@ -24,7 +23,7 @@
         
         <main>
             <div class="card">
-                <h3>Input Lembur Baru</h3>
+                <h3>Input Lembur</h3>
                 <div class="input-group">
                     <label>Nama Karyawan</label>
                     <input type="text" id="nama" value="Pajar Ardianto" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
@@ -34,14 +33,30 @@
                     <input type="date" id="tanggal">
                 </div>
                 <div class="input-group">
-                    <label>Durasi (Jam)</label>
-                    <input type="number" id="durasi" step="0.5" placeholder="Contoh: 3.5">
+                    <label>Durasi Lembur (Jam)</label>
+                    <select id="durasi">
+                        <option value="0.5">0.5 Jam</option>
+                        <option value="1">1 Jam</option>
+                        <option value="1.5">1.5 Jam</option>
+                        <option value="2">2 Jam</option>
+                        <option value="2.5">2.5 Jam</option>
+                        <option value="3">3 Jam</option>
+                        <option value="3.5">3.5 Jam</option>
+                        <option value="4">4 Jam</option>
+                        <option value="4.5">4.5 Jam</option>
+                        <option value="5">5 Jam</option>
+                        <option value="5.5">5.5 Jam</option>
+                        <option value="6">6 Jam</option>
+                        <option value="6.5">6.5 Jam</option>
+                        <option value="7">7 Jam</option>
+                        <option value="7.5">7.5 Jam</option>
+                        <option value="8" selected>8 Jam</option>
+                    </select>
                 </div>
                 <button onclick="tambahData()" id="btnSimpan">Simpan Data</button>
             </div>
 
             <div class="history">
-                <h3>Detail Riwayat</h3>
                 <div class="table-container">
                     <table id="tabelLembur">
                         <thead>
