@@ -1,7 +1,5 @@
 :root {
     --primary: #2563eb;
-    --success: #16a34a;
-    --danger: #dc2626;
     --bg: #f8fafc;
 }
 
@@ -15,26 +13,30 @@ body {
     color: #1e293b;
 }
 
-.container {
-    width: 100%;
-    max-width: 600px;
-}
+.container { width: 100%; max-width: 600px; }
 
 .summary-card {
-    background: white;
-    padding: 30px;
+    background: var(--primary);
+    color: white;
+    padding: 25px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid var(--primary);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     margin-bottom: 25px;
 }
 
-#totalTULBesar {
-    font-size: 4rem;
-    margin: 10px 0;
+.filter-section { margin-bottom: 15px; }
+.filter-section label { display: block; font-size: 0.8rem; margin-bottom: 5px; opacity: 0.9; }
+.filter-section select {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
     color: var(--primary);
+    width: 80%;
 }
+
+#totalTULBesar { font-size: 4rem; margin: 10px 0; }
 
 .card {
     background: white;
@@ -44,30 +46,20 @@ body {
     margin-bottom: 20px;
 }
 
-.input-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
+.input-group { margin-bottom: 15px; }
+label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; }
 input {
     width: 100%;
     padding: 12px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     box-sizing: border-box;
-    font-size: 1rem;
 }
 
 button {
     width: 100%;
     padding: 14px;
-    background-color: var(--primary);
+    background-color: #16a34a;
     color: white;
     border: none;
     border-radius: 8px;
@@ -75,34 +67,8 @@ button {
     cursor: pointer;
 }
 
-.table-container {
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-th {
-    background: #f1f5f9;
-    font-size: 0.8rem;
-}
-
-.btn-delete {
-    background: var(--danger);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
+.table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+th { background: #f1f5f9; color: #64748b; }
+.btn-delete { background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
