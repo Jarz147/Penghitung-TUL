@@ -11,24 +11,21 @@ function buatOpsiBulan() {
     const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     const skrg = new Date();
     
-    // Tampilkan 6 bulan ke belakang dan 1 bulan depan
     for (let i = -6; i <= 1; i++) {
         let d = new Date(skrg.getFullYear(), skrg.getMonth() + i, 1);
         let opsi = document.createElement('option');
         opsi.value = JSON.stringify({ bulan: d.getMonth(), tahun: d.getFullYear() });
         opsi.text = `${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
         
-        if (i === 0) opsi.selected = true; // Default bulan sekarang
+        if (i === 0) opsi.selected = true; 
         select.appendChild(opsi);
     }
 }
 
-// 2. Logika Hitung Range Cut-Off 16 - 15
+// 2. Logika Range Cut-Off 16 - 15
 function dapatkanRange(bulan, tahun) {
-    // Start: tgl 16 bulan sebelumnya. End: tgl 15 bulan yang dipilih.
     const start = new Date(tahun, bulan - 1, 16);
     const end = new Date(tahun, bulan, 15);
-    
     return {
         startStr: start.toISOString().split('T')[0],
         endStr: end.toISOString().split('T')[0]
@@ -42,19 +39,24 @@ function hitungTUL(jam) {
     return jam <= 1 ? jam * 1.5 : 1.5 + (jam - 1) * 2;
 }
 
-// 4. Tambah Data
+// 4. Tambah Data (Nama selalu Pajar Ardianto)
 async function tambahData() {
-    const nama = document.getElementById('nama').value;
+    const nama = document.getElementById('nama').value; // Mengambil "Pajar Ardianto"
     const tanggal = document.getElementById('tanggal').value;
     const durasi = parseFloat(document.getElementById('durasi').value);
     const btn = document.getElementById('btnSimpan');
 
-    if (!nama || !tanggal || isNaN(durasi)) return alert("Mohon lengkapi data!");
+    if (!tanggal || isNaN(durasi)) return alert("Mohon lengkapi Tanggal dan Durasi!");
 
     btn.disabled = true;
     btn.innerText = "Menyimpan...";
 
-    const { error } = await _supabase.from('data_lembur').insert([{ nama, tanggal, durasi, tul: hitungTUL(durasi) }]);
+    const { error } = await _supabase.from('data_lembur').insert([{ 
+        nama: nama, 
+        tanggal: tanggal, 
+        durasi: durasi, 
+        tul: hitungTUL(durasi) 
+    }]);
     
     if (error) {
         alert("Gagal: " + error.message);
@@ -66,9 +68,12 @@ async function tambahData() {
     btn.innerText = "Simpan Data";
 }
 
-// 5. Render & Summary
+// 5. Render Data ke Tabel
 async function renderData() {
-    const dropdown = JSON.parse(document.getElementById('pilihPeriode').value);
+    const dropdownValue = document.getElementById('pilihPeriode').value;
+    if(!dropdownValue) return;
+    
+    const dropdown = JSON.parse(dropdownValue);
     const { startStr, endStr } = dapatkanRange(dropdown.bulan, dropdown.tahun);
 
     const { data, error } = await _supabase
