@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Catat Lembur - TUL</title>
+    <title>Sistem Lembur TUL - Cut Off 16-15</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -11,15 +11,20 @@
     <div class="container">
         <header>
             <div class="summary-card">
+                <div class="filter-section">
+                    <label>Pilih Periode History:</label>
+                    <select id="pilihPeriode" onchange="renderData()">
+                        </select>
+                </div>
                 <p id="labelPeriode">Menghitung periode...</p>
                 <h1 id="totalTULBesar">0</h1>
-                <span>TOTAL TARIF UPAH LEMBUR (TUL)</span>
+                <span>TOTAL TUL PERIODE INI</span>
             </div>
         </header>
         
         <main>
             <div class="card">
-                <h3>Input Data Lembur</h3>
+                <h3>Input Lembur Baru</h3>
                 <div class="input-group">
                     <label>Nama Karyawan</label>
                     <input type="text" id="nama" placeholder="Ketik nama...">
@@ -36,7 +41,7 @@
             </div>
 
             <div class="history">
-                <h3>Riwayat Periode 16 - 15</h3>
+                <h3>Detail Riwayat</h3>
                 <div class="table-container">
                     <table id="tabelLembur">
                         <thead>
@@ -48,8 +53,7 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
