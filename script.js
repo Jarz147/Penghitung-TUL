@@ -22,7 +22,13 @@ function buatOpsiBulan() {
 function dapatkanRange(bulan, tahun) {
     const start = new Date(tahun, bulan - 1, 16);
     const end = new Date(tahun, bulan, 15);
-    const f = (d) => d.toISOString().split('T')[0];
+    // Format tanggal pakai waktu lokal (bukan UTC) supaya tidak mundur 1 hari
+    const f = (d) => {
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
     return { startStr: f(start), endStr: f(end) };
 }
 
