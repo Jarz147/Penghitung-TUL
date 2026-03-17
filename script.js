@@ -4,6 +4,27 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Konfigurasi user dan PIN sederhana (PIN = NPK)
+const USERS = [
+    { nama: 'Arif Mustaqim', pin: '18170203' },
+    { nama: 'Handaka Primasta', pin: '18120027' },
+    { nama: 'Muhammad Yusuf bin mahmud', pin: '18120023' },
+    { nama: 'Dikdik abdul aziz', pin: '18160165' },
+    { nama: 'Wawan Gianto', pin: '18130057' },
+    { nama: 'Aryo Setioko', pin: '18160166' },
+    { nama: 'Wisnu Ernandi', pin: '18190283' },
+    { nama: 'Nur Rohmat', pin: '18140079' },
+    { nama: 'Budi Irawan', pin: '18160167' },
+    { nama: 'Pajar Ardianto', pin: '18200317' },
+    { nama: 'Iwan Prasetyo', pin: '18210362' },
+    { nama: 'Azkia Rasya Ikbar', pin: '18220408' },
+    { nama: 'Irwan Bagustian', pin: '18230476' },
+    { nama: 'Randika Septian', pin: '18230468' },
+    { nama: 'Achmad Shobirin', pin: '18200329' },
+];
+
+let currentUser = null;
+
 function buatOpsiBulan() {
     const select = document.getElementById('pilihPeriode');
     const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -38,6 +59,7 @@ function hitungTUL(jam) {
 }
 
 async function tambahData() {
+    const namaEl = document.getElementById('nama');
     const tglEl = document.getElementById('tanggal');
     const jenisEl = document.getElementById('jenisLembur');
     const detailEl = document.getElementById('detailPekerjaan');
@@ -50,7 +72,7 @@ async function tambahData() {
     btn.innerText = "Menyimpan...";
 
     const { error } = await _supabase.from('data_lembur').insert([{ 
-        nama: "Pajar Ardianto", 
+        nama: namaEl.value, 
         tanggal: tglEl.value, 
         durasi: parseFloat(durasiEl.value), 
         tul: hitungTUL(parseFloat(durasiEl.value)),
@@ -75,12 +97,16 @@ async function tambahData() {
 }
 
 async function renderData() {
+    const namaEl = document.getElementById('nama');
     const dropdown = JSON.parse(document.getElementById('pilihPeriode').value);
     const { startStr, endStr } = dapatkanRange(dropdown.bulan, dropdown.tahun);
     document.getElementById('labelPeriode').innerText = `${startStr} s/d ${endStr}`;
 
     const { data, error } = await _supabase.from('data_lembur').select('*')
-        .gte('tanggal', startStr).lte('tanggal', endStr).order('tanggal', { ascending: false });
+        .eq('nama', namaEl.value)
+        .gte('tanggal', startStr)
+        .lte('tanggal', endStr)
+        .order('tanggal', { ascending: false });
     
     if (error) return;
 
@@ -101,8 +127,132 @@ async function renderData() {
     document.getElementById('totalTULBesar').innerText = total.toFixed(1);
 }
 
+let chartLembur = null;
+
+async function tampilkanGrafik() {
+    const dropdown = JSON.parse(document.getElementById('pilihPeriode').value);
+    const { startStr, endStr } = dapatkanRange(dropdown.bulan, dropdown.tahun);
+
+    // Ambil data akumulasi TUL per nama di periode terpilih
+    const { data, error } = await _supabase
+        .from('data_lembur')
+        .select('nama, total_tul:sum(tul)')
+        .gte('tanggal', startStr)
+        .lte('tanggal', endStr)
+        .group('nama')
+        .order('total_tul', { ascending: false });
+
+    if (error) {
+        alert('Gagal mengambil data grafik: ' + error.message);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        alert('Tidak ada data lembur di periode ini.');
+        return;
+    }
+
+    const batasAtasEl = document.getElementById('batasAtasGrafik');
+    const limitEl = document.getElementById('limitGrafik');
+    const batasAtas = batasAtasEl.value ? parseFloat(batasAtasEl.value) : null;
+    const limit = limitEl.value ? parseFloat(limitEl.value) : null;
+
+    const labels = data.map((item) => item.nama);
+    const totals = data.map((item) => item.total_tul);
+
+    const ctx = document.getElementById('grafikLembur').getContext('2d');
+
+    if (chartLembur) {
+        chartLembur.destroy();
+    }
+
+    chartLembur = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Total TUL',
+                    data: totals,
+                    backgroundColor: 'rgba(37, 99, 235, 0.6)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                },
+                ...(limit !== null
+                    ? [
+                          {
+                              label: 'Limit',
+                              type: 'line',
+                              data: labels.map(() => limit),
+                              borderColor: 'rgba(239, 68, 68, 1)',
+                              borderWidth: 2,
+                              pointRadius: 0,
+                              fill: false,
+                          },
+                      ]
+                    : []),
+            ],
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: batasAtas || undefined,
+                },
+            },
+        },
+    });
+}
+
 async function hapusData(id) {
     if (confirm("Hapus?")) { await _supabase.from('data_lembur').delete().eq('id', id); renderData(); }
 }
 
-window.onload = () => { buatOpsiBulan(); renderData(); };
+function syncUserToForm() {
+    const namaSelect = document.getElementById('nama');
+    if (!namaSelect || !currentUser) return;
+    namaSelect.value = currentUser.nama;
+    namaSelect.disabled = true;
+}
+
+function handleLogin() {
+    const nama = document.getElementById('loginNama').value;
+    const pin = document.getElementById('loginPin').value;
+
+    const user = USERS.find((u) => u.nama === nama && u.pin === pin);
+    if (!user) {
+        alert('Nama atau PIN salah.');
+        return;
+    }
+
+    currentUser = { nama: user.nama };
+    localStorage.setItem('currentUserNama', currentUser.nama);
+
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('appSection').style.display = 'block';
+
+    syncUserToForm();
+    renderData();
+}
+
+window.onload = () => {
+    buatOpsiBulan();
+
+    const savedNama = localStorage.getItem('currentUserNama');
+    if (savedNama) {
+        const user = USERS.find((u) => u.nama === savedNama);
+        if (user) {
+            currentUser = { nama: user.nama };
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
+            syncUserToForm();
+            renderData();
+            return;
+        }
+    }
+
+    // Jika belum login, hanya tampilkan form login
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('appSection').style.display = 'none';
+};
