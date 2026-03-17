@@ -3,12 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem-Lembur-TUL - Pajar Ardianto</title>
+    <title>Sistem Lembur TUL - Pajar Ardianto</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
+    <div id="loginSection" class="login-section">
+        <div class="card">
+            <h3>Login</h3>
+            <div class="input-group">
+                <label>Nama</label>
+                <select id="loginNama">
+                    <option value="Arif Mustaqim">Arif Mustaqim</option>
+                    <option value="Handaka Primasta">Handaka Primasta</option>
+                    <option value="Muhammad Yusuf bin mahmud">Muhammad Yusuf bin mahmud</option>
+                    <option value="Dikdik abdul aziz">Dikdik abdul aziz</option>
+                    <option value="Wawan Gianto">Wawan Gianto</option>
+                    <option value="Aryo Setioko">Aryo Setioko</option>
+                    <option value="Wisnu Ernandi">Wisnu Ernandi</option>
+                    <option value="Nur Rohmat">Nur Rohmat</option>
+                    <option value="Budi Irawan">Budi Irawan</option>
+                    <option value="Pajar Ardianto">Pajar Ardianto</option>
+                    <option value="Iwan Prasetyo">Iwan Prasetyo</option>
+                    <option value="Azkia Rasya Ikbar">Azkia Rasya Ikbar</option>
+                    <option value="Irwan Bagustian">Irwan Bagustian</option>
+                    <option value="Randika Septian">Randika Septian</option>
+                    <option value="Achmad Shobirin">Achmad Shobirin</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>NPK (sebagai PIN)</label>
+                <input type="password" id="loginPin" placeholder="Masukkan NPK">
+            </div>
+            <button onclick="handleLogin()">Masuk</button>
+        </div>
+    </div>
+
+    <div class="container" id="appSection" style="display:none;">
         <header>
             <div class="summary-card">
                 <div class="filter-section">
@@ -26,7 +58,23 @@
                 <h3>Input Lembur</h3>
                 <div class="input-group">
                     <label>Nama Karyawan</label>
-                    <input type="text" id="nama" value="Pajar Ardianto" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
+                    <select id="nama" onchange="renderData()">
+                        <option value="Arif Mustaqim">Arif Mustaqim</option>
+                        <option value="Handaka Primasta">Handaka Primasta</option>
+                        <option value="Muhammad Yusuf bin mahmud">Muhammad Yusuf bin mahmud</option>
+                        <option value="Dikdik abdul aziz">Dikdik abdul aziz</option>
+                        <option value="Wawan Gianto">Wawan Gianto</option>
+                        <option value="Aryo Setioko">Aryo Setioko</option>
+                        <option value="Wisnu Ernandi">Wisnu Ernandi</option>
+                        <option value="Nur Rohmat">Nur Rohmat</option>
+                        <option value="Budi Irawan">Budi Irawan</option>
+                        <option value="Pajar Ardianto">Pajar Ardianto</option>
+                        <option value="Iwan Prasetyo">Iwan Prasetyo</option>
+                        <option value="Azkia Rasya Ikbar">Azkia Rasya Ikbar</option>
+                        <option value="Irwan Bagustian">Irwan Bagustian</option>
+                        <option value="Randika Septian">Randika Septian</option>
+                        <option value="Achmad Shobirin">Achmad Shobirin</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label>Tanggal</label>
@@ -82,6 +130,21 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+                <div class="chart-section">
+                    <h3>Grafik Akumulasi Lembur Perorangan</h3>
+                    <div class="input-group">
+                        <label>Batas Atas Grafik (opsional)</label>
+                        <input type="number" id="batasAtasGrafik" placeholder="Contoh: 100">
+                    </div>
+                    <div class="input-group">
+                        <label>Nilai Limit (opsional)</label>
+                        <input type="number" id="limitGrafik" placeholder="Contoh: 80">
+                    </div>
+                    <button id="btnTampilGrafik" onclick="tampilkanGrafik()">Tampilkan Grafik</button>
+                    <div class="chart-container">
+                        <canvas id="grafikLembur"></canvas>
+                    </div>
                 </div>
             </div>
         </main>
