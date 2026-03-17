@@ -7,7 +7,6 @@ const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 // Konfigurasi user dan PIN sederhana (PIN = NPK)
 const USERS = [
     { nama: 'Arif Mustaqim', pin: '18170203' },
-    { nama: 'Handaka Primasta', pin: '18120027' },
     { nama: 'Muhammad Yusuf bin mahmud', pin: '18120023' },
     { nama: 'Dikdik abdul aziz', pin: '18160165' },
     { nama: 'Wawan Gianto', pin: '18130057' },
