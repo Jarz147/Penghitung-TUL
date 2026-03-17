@@ -34,6 +34,7 @@ function hitungTUL(jam) {
 async function tambahData() {
     const tglEl = document.getElementById('tanggal');
     const jenisEl = document.getElementById('jenisLembur');
+    const detailEl = document.getElementById('detailPekerjaan');
     const durasiEl = document.getElementById('durasi');
     const btn = document.getElementById('btnSimpan');
 
@@ -47,7 +48,9 @@ async function tambahData() {
         tanggal: tglEl.value, 
         durasi: parseFloat(durasiEl.value), 
         tul: hitungTUL(parseFloat(durasiEl.value)),
-        keterangan: jenisEl.value // Kita simpan jenis lembur ke kolom keterangan
+        keterangan: detailEl.value 
+            ? `${jenisEl.value} - ${detailEl.value}` 
+            : jenisEl.value
     }]);
     
     if (error) {
@@ -58,6 +61,7 @@ async function tambahData() {
         tglEl.value = ""; 
         durasiEl.value = "8";
         jenisEl.selectedIndex = 0;
+        if (detailEl) detailEl.value = "";
         renderData();
     }
     btn.disabled = false;
