@@ -165,6 +165,32 @@ function tutupKlasemen() {
     }
 }
 
+const labelDiDalamBarPlugin = {
+    id: 'labelDiDalamBar',
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const barDatasetIndex = chart.data.datasets.findIndex((d) => d.type !== 'line');
+        if (barDatasetIndex < 0) return;
+
+        const meta = chart.getDatasetMeta(barDatasetIndex);
+        const values = chart.data.datasets[barDatasetIndex].data || [];
+        ctx.save();
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        meta.data.forEach((bar, i) => {
+            const value = Number(values[i]);
+            if (Number.isNaN(value)) return;
+            const text = value % 1 === 0 ? String(value) : value.toFixed(1);
+            const yPos = bar.y + 6;
+            ctx.fillText(text, bar.x, yPos);
+        });
+        ctx.restore();
+    },
+};
+
 let chartLembur = null;
 
 async function tampilkanGrafik() {
@@ -240,6 +266,13 @@ async function tampilkanGrafik() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        boxWidth: 12,
+                    },
+                },
+            },
             scales: {
                 x: {
                     ticks: {
@@ -255,6 +288,7 @@ async function tampilkanGrafik() {
                 },
             },
         },
+        plugins: [labelDiDalamBarPlugin],
     });
 }
 
