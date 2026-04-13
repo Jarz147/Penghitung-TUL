@@ -6,6 +6,7 @@
     <title>Sistem Lembur TUL - Pajar Ardianto</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div id="loginSection" class="login-section">
@@ -44,15 +45,18 @@
             <div class="summary-card">
                 <div class="filter-section">
                     <label>Pilih Periode History:</label>
-                    <select id="pilihPeriode" onchange="renderData()"></select>
+                    <select id="pilihPeriode" onchange="onPeriodeChanged()"></select>
                 </div>
                 <p id="labelPeriode">Menghitung periode...</p>
-                <h1 id="totalTULBesar">0</h1>
-                <span>TOTAL TUL PERIODE INI</span>
+                <div id="headerStats">
+                    <h1 id="totalTULBesar">0</h1>
+                    <span>TOTAL TUL PERIODE INI</span>
+                </div>
+                <button type="button" class="btn-klasemen" id="btnKlasemen" onclick="bukaKlasemen()">KLASEMEN</button>
             </div>
         </header>
         
-        <main>
+        <main id="viewInput">
             <div class="card">
                 <h3>Input Lembur</h3>
                 <div class="input-group">
@@ -132,6 +136,17 @@
                 </div>
             </div>
         </main>
+
+        <section id="viewKlasemen" class="view-klasemen" style="display:none;" aria-label="Klasemen TUL">
+            <div class="card card-klasemen">
+                <h3>Klasemen — total TUL semua nama</h3>
+                <p class="klasemen-hint">Data mengikuti periode yang dipilih di atas.</p>
+                <div class="chart-wrap">
+                    <canvas id="grafikLembur" aria-label="Grafik batang total TUL per nama"></canvas>
+                </div>
+                <button type="button" class="btn-kembali" onclick="tutupKlasemen()">Kembali ke input</button>
+            </div>
+        </section>
     </div>
     <script src="script.js"></script>
 </body>
