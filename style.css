@@ -14,6 +14,8 @@ body {
 
 .container { width: 100%; max-width: 600px; }
 
+.container.container--wide { max-width: min(100%, 920px); }
+
 .summary-card {
     background: var(--primary);
     color: white;
@@ -62,3 +64,33 @@ table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
 th { background: #f1f5f9; }
 .btn-delete { background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+
+.btn-klasemen {
+    margin-top: 14px;
+    background: #f8fafc;
+    color: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+}
+
+.btn-klasemen:hover { background: #e2e8f0; }
+
+.btn-kembali {
+    margin-top: 16px;
+    background: #64748b;
+}
+
+.btn-kembali:hover { background: #475569; }
+
+.view-klasemen { width: 100%; }
+
+.card-klasemen .klasemen-hint {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.chart-wrap {
+    position: relative;
+    height: min(420px, 55vh);
+    width: 100%;
+}
