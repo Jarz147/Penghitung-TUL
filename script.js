@@ -126,38 +126,83 @@ async function renderData() {
     document.getElementById('totalTULBesar').innerText = total.toFixed(1);
 }
 
+function isKlasemenTerbuka() {
+    const el = document.getElementById('viewKlasemen');
+    return el && el.style.display !== 'none';
+}
+
+function onPeriodeChanged() {
+    renderData();
+    if (isKlasemenTerbuka()) {
+        tampilkanGrafik();
+    }
+}
+
+function bukaKlasemen() {
+    const app = document.getElementById('appSection');
+    if (app) app.classList.add('container--wide');
+    document.getElementById('viewInput').style.display = 'none';
+    const headerStats = document.getElementById('headerStats');
+    if (headerStats) headerStats.style.display = 'none';
+    document.getElementById('viewKlasemen').style.display = 'block';
+    const btn = document.getElementById('btnKlasemen');
+    if (btn) btn.style.display = 'none';
+    tampilkanGrafik();
+}
+
+function tutupKlasemen() {
+    const app = document.getElementById('appSection');
+    if (app) app.classList.remove('container--wide');
+    document.getElementById('viewInput').style.display = 'block';
+    const headerStats = document.getElementById('headerStats');
+    if (headerStats) headerStats.style.display = 'block';
+    document.getElementById('viewKlasemen').style.display = 'none';
+    const btn = document.getElementById('btnKlasemen');
+    if (btn) btn.style.display = 'block';
+    if (chartLembur) {
+        chartLembur.destroy();
+        chartLembur = null;
+    }
+}
+
 let chartLembur = null;
 
 async function tampilkanGrafik() {
     const dropdown = JSON.parse(document.getElementById('pilihPeriode').value);
     const { startStr, endStr } = dapatkanRange(dropdown.bulan, dropdown.tahun);
 
-    // Ambil data akumulasi TUL per nama di periode terpilih
     const { data, error } = await _supabase
         .from('data_lembur')
-        .select('nama, total_tul:sum(tul)')
+        .select('nama, tul')
         .gte('tanggal', startStr)
-        .lte('tanggal', endStr)
-        .group('nama')
-        .order('total_tul', { ascending: false });
+        .lte('tanggal', endStr);
 
     if (error) {
         alert('Gagal mengambil data grafik: ' + error.message);
         return;
     }
 
-    if (!data || data.length === 0) {
+    const totalsMap = {};
+    (data || []).forEach((row) => {
+        const n = row.nama;
+        totalsMap[n] = (totalsMap[n] || 0) + Number(row.tul);
+    });
+    const aggregated = Object.entries(totalsMap)
+        .map(([nama, total_tul]) => ({ nama, total_tul }))
+        .sort((a, b) => b.total_tul - a.total_tul);
+
+    if (aggregated.length === 0) {
         alert('Tidak ada data lembur di periode ini.');
         return;
     }
 
     const batasAtasEl = document.getElementById('batasAtasGrafik');
     const limitEl = document.getElementById('limitGrafik');
-    const batasAtas = batasAtasEl.value ? parseFloat(batasAtasEl.value) : null;
-    const limit = limitEl.value ? parseFloat(limitEl.value) : null;
+    const batasAtas = batasAtasEl && batasAtasEl.value ? parseFloat(batasAtasEl.value) : null;
+    const limit = limitEl && limitEl.value ? parseFloat(limitEl.value) : null;
 
-    const labels = data.map((item) => item.nama);
-    const totals = data.map((item) => item.total_tul);
+    const labels = aggregated.map((item) => item.nama);
+    const totals = aggregated.map((item) => item.total_tul);
 
     const ctx = document.getElementById('grafikLembur').getContext('2d');
 
@@ -194,7 +239,16 @@ async function tampilkanGrafik() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 35,
+                        autoSkip: false,
+                        font: { size: 10 },
+                    },
+                },
                 y: {
                     beginAtZero: true,
                     suggestedMax: batasAtas || undefined,
